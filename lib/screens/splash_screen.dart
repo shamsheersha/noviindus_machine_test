@@ -14,11 +14,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
 
-  }
 
   Future<void> _checkAuthAndNavigate(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);

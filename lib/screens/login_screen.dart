@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Positioned(
                 top: 95,
-                left: MediaQuery.of(context).size.width * 0.39,
+                left: MediaQuery.of(context).size.width * 0.40,
                 child: Image.asset("assets/images/logo.png", height: 80),
               ),
             ],
@@ -130,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                       ),
+                      
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Password is required';
@@ -225,6 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -232,38 +234,41 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // ...existing code...
-Future<void> _handleLogin() async {
-  if (!_formKey.currentState!.validate()) {
-    return;
-  }
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-  final success = await authProvider.login(
-    username: _usernameController.text,
-    password: _passwordController.text,
-  );
-
-  if (!mounted) return;
-
-  if (success) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Login successful!'),
-        backgroundColor: Colors.green,
-      ),
+    final success = await authProvider.login(
+      username: _usernameController.text,
+      password: _passwordController.text,
     );
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const HomeScreen()));
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(authProvider.errorMessage.isNotEmpty
-            ? authProvider.errorMessage
-            : 'Login failed'),
-        backgroundColor: Colors.red,
-      ),
-    );
+
+    if (!mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login successful!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            authProvider.errorMessage.isNotEmpty
+                ? authProvider.errorMessage
+                : 'Login failed',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
-}
 }

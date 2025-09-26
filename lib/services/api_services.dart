@@ -41,4 +41,34 @@ class ApiServices {
       };
     }
   }
+
+
+  static Future<Map<String, dynamic>> fetchPatientList({required String token}) async {
+  try {
+    final url = Uri.parse('${baseUrl}PatientList');
+    final response = await http.get(
+      url,
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return {
+        'success': true,
+        'data': data,
+        'message': 'Patient list fetched successfully',
+      };
+    } else {
+      return {
+        'success': false,
+        'message': 'Failed to fetch patient list: ${response.reasonPhrase}',
+      };
+    }
+  } catch (e) {
+    return {
+      'success': false,
+      'message': 'An error occurred: ${e.toString()}',
+    };
+  }
+}
+
 }

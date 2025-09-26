@@ -96,7 +96,7 @@ class AuthProvider with ChangeNotifier {
       _errorMessage = '';
       notifyListeners();
     } catch (e) {
-      print('Error during logout: $e');
+      log('Error during logout: $e');
     }
   }
 
