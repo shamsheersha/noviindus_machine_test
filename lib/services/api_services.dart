@@ -8,7 +8,7 @@ class ApiServices {
   static Future<Map<String, dynamic>> login({
     required String username,
     required String password,
-  })async{
+  }) async {
     try {
       final url = Uri.parse('${baseUrl}Login');
 
@@ -20,21 +20,47 @@ class ApiServices {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         log(response.body);
         final data = json.decode(response.body);
-        return {
-          'success': true,
-          'data': data,
-          'message': 'Login successful',
-        };
-      }else {
+        return {'success': true, 'data': data, 'message': 'Login successful'};
+      } else {
         return {
           'success': false,
           'message': 'Login failed: ${response.reasonPhrase}',
         };
       }
-    }catch (e) {
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'An error occurred: ${e.toString()}',
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchPatientList({
+    required String token,
+  }) async {
+    try {
+      final url = Uri.parse('${baseUrl}PatientList');
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return {
+          'success': true,
+          'data': data,
+          'message': 'Patient list fetched successfully',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Failed to fetch patient list: ${response.reasonPhrase}',
+        };
+      }
+    } catch (e) {
       return {
         'success': false,
         'message': 'An error occurred: ${e.toString()}',
@@ -43,32 +69,32 @@ class ApiServices {
   }
 
 
-  static Future<Map<String, dynamic>> fetchPatientList({required String token}) async {
-  try {
-    final url = Uri.parse('${baseUrl}PatientList');
-    final response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $token'},
-    );
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return {
-        'success': true,
-        'data': data,
-        'message': 'Patient list fetched successfully',
-      };
-    } else {
+  static Future<Map<String, dynamic>> fetchBranchList({required String token}) async {
+    try {
+      final url = Uri.parse('${baseUrl}BranchList');
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return {
+          'success': true,
+          'data': data,
+          'message': 'Branch list fetched successfully',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Failed to fetch branch list: ${response.reasonPhrase}',
+        };
+      }
+    } catch (e) {
       return {
         'success': false,
-        'message': 'Failed to fetch patient list: ${response.reasonPhrase}',
+        'message': 'An error occurred: ${e.toString()}',
       };
     }
-  } catch (e) {
-    return {
-      'success': false,
-      'message': 'An error occurred: ${e.toString()}',
-    };
   }
-}
 
 }
