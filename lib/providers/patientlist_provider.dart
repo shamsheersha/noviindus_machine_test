@@ -13,28 +13,40 @@ class PatientProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
 
   Future<bool> fetchPatientList({required String token}) async {
-    try {
-      _isFetchingPatients = true;
+  try {
+    _isFetchingPatients = true;
+    _errorMessage = '';
+    notifyListeners();
+    
+    final result = await ApiServices.fetchPatientList(token: token);
+    if (result['success']) {
+      // Fix: Check if data has a 'patient' key or is directly a list
+      final data = result['data'];
+      if (data is Map && data.containsKey('patient')) {
+        _patientList = (data['patient'] as List)
+            .map((item) => PatientModel.fromJson(item))
+            .toList();
+      } else if (data is List) {
+        _patientList = data.map((item) => PatientModel.fromJson(item)).toList();
+      } else {
+        _patientList = [];
+      }
+      
       _errorMessage = '';
       notifyListeners();
-      final result = await ApiServices.fetchPatientList(token: token);
-      if (result['success']) {
-        _patientList = (result['data'] as List).map((item) => PatientModel.fromJson(item)).toList();
-        _errorMessage = '';
-        notifyListeners();
-        return true;
-      } else {
-        _errorMessage = result['message'];
-        notifyListeners();
-        return false;
-      }
-    } catch (e) {
-      _errorMessage = 'An unexpected error occurred: $e';
+      return true;
+    } else {
+      _errorMessage = result['message'];
       notifyListeners();
       return false;
-    } finally {
-      _isFetchingPatients = false;
-      notifyListeners();
     }
+  } catch (e) {
+    _errorMessage = 'An unexpected error occurred: $e';
+    notifyListeners();
+    return false;
+  } finally {
+    _isFetchingPatients = false;
+    notifyListeners();
   }
+}
 }

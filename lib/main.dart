@@ -1,4 +1,7 @@
+import 'package:ayurved_care/providers/branchlist_provider.dart';
 import 'package:ayurved_care/providers/patientlist_provider.dart';
+import 'package:ayurved_care/providers/register_provider.dart';
+import 'package:ayurved_care/providers/treatmentlist_provider.dart';
 import 'package:ayurved_care/screens/splash_screen.dart';
 import 'package:ayurved_care/utils/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +21,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => PatientProvider()),
+        ChangeNotifierProvider(create: (_) => BranchProvider()),
+        ChangeNotifierProvider(create: (_) => TreatmentProvider()),
+        ChangeNotifierProvider(create: (_) => RegisterProvider()),
       ],
       child: MaterialApp(
         title: 'Ayurveda Care',

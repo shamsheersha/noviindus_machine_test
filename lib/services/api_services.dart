@@ -131,7 +131,7 @@ class ApiServices {
   static Future<Map<String, dynamic>> registerPatient({
     required String token,
     required String name,
-    required String executive,
+    required String excecutive,
     required String payment,
     required String phone,
     required String address,
@@ -151,16 +151,16 @@ class ApiServices {
       request.headers['Authorization'] = 'Bearer $token';
 
       request.fields['name'] = name;
-      request.fields['executive'] = executive;
+      request.fields['excecutive'] = excecutive;
       request.fields['payment'] = payment;
       request.fields['phone'] = phone;
       request.fields['address'] = address;
-      request.fields['total_amount'] = totalAmount.toString();
-      request.fields['discount_amount'] = discountAmount.toString();
-      request.fields['advance_amount'] = advanceAmount.toString();
-      request.fields['balance_amount'] = balanceAmount.toString();
+      request.fields['total_amount'] = totalAmount.round().toString();
+      request.fields['discount_amount'] = discountAmount.round().toString();
+      request.fields['advance_amount'] = advanceAmount.round().toString();
+      request.fields['balance_amount'] = balanceAmount.round().toString();
       request.fields['date_nd_time'] = dateNdTime;
-      request.fields['id'] = ''; 
+      request.fields['id'] = '';
       request.fields['male'] = maleTreatmentIds.join(',');
       request.fields['female'] = femaleTreatmentIds.join(',');
       request.fields['branch'] = branch;
@@ -169,20 +169,33 @@ class ApiServices {
       log('Patient Registration Data: ${request.fields}');
 
       final streamedResponse = await request.send();
+      
       final response = await http.Response.fromStream(streamedResponse);
-
+      log(response.body);
       if (response.statusCode == 200) {
         log('Patient Registration Response: ${response.body}');
         final data = json.decode(response.body);
-        return {
-          'success': true,
-          'data': data,
-          'message': 'Patient registered successfully',
-        };
+
+        log('Response data keys: ${data.keys}');
+        log('Response status/success: ${data['status']} / ${data['success']}');
+
+        // Check if registration was actually successful
+        if(data['status'] == true || data['success'] == true){
+          return {
+            'success': true,
+            'data': data,
+            'message': 'Patient registered successfully',
+          };
+        } else {
+          return {
+            'success': false,
+            'message': 'Registration failed: ${data['message'] ?? 'Unknown error'}',
+          };
+        }
       } else {
         return {
           'success': false,
-          'message': 'Failed to register patient: ${response.reasonPhrase}',
+          'message': 'Failed to register patient: ${response.body}',
         };
       }
     } catch (e) {
