@@ -1,6 +1,6 @@
 import 'package:ayurved_care/providers/auth_provider.dart';
 import 'package:ayurved_care/providers/branchlist_provider.dart';
-import 'package:ayurved_care/providers/patientlist_provider.dart';
+  import 'package:ayurved_care/providers/patientlist_provider.dart';
 import 'package:ayurved_care/providers/treatmentlist_provider.dart';
 import 'package:ayurved_care/screens/login_screen.dart';
 import 'package:ayurved_care/screens/patientdetail_screen.dart';

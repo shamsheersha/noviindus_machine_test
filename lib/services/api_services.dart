@@ -45,16 +45,33 @@ class ApiServices {
   }) async {
     try {
       final url = Uri.parse('${baseUrl}PatientList');
+      
+      // Debug logging
+      log('Fetching patient list with token: ${token.substring(0, 10)}...');
+      log('Request URL: $url');
+      
       final response = await http.get(
         url,
-        headers: {'Authorization': 'Bearer $token'},
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
       );
+      
+      log('Response status: ${response.statusCode}');
+      log('Response body: ${response.body}');
+      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return {
           'success': true,
           'data': data,
           'message': 'Patient list fetched successfully',
+        };
+      } else if (response.statusCode == 401) {
+        return {
+          'success': false,
+          'message': 'Unauthorized: Token may be expired or invalid',
         };
       } else {
         return {
@@ -63,6 +80,7 @@ class ApiServices {
         };
       }
     } catch (e) {
+      log('Error fetching patient list: $e');
       return {
         'success': false,
         'message': 'An error occurred: ${e.toString()}',
