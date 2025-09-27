@@ -30,6 +30,11 @@ class PatientModel {
   });
 
   factory PatientModel.fromJson(Map<String, dynamic> json) {
+    // Debug: Print all available keys
+    print('Available keys in patient JSON: ${json.keys.toList()}');
+    print('date_nd_time value: ${json['date_nd_time']}');
+    print('created_at value: ${json['created_at']}');
+    
     // Extract branch name from branch object
     String branchName = '';
     if (json['branch'] != null) {
@@ -54,7 +59,7 @@ class PatientModel {
       name: json['name'] ?? '',
       phone: json['phone'] ?? '',
       address: json['address'] ?? '',
-      dateAndTime: json['date_nd_time']?.toString() ?? '',
+      dateAndTime: json['date_nd_time']?.toString() ?? json['created_at']?.toString() ?? '',
       branch: branchName,
       excecutive: json['user'] ?? '', // API uses 'user' field
       payment: json['payment'] ?? '',

@@ -47,6 +47,71 @@ class AppTheme {
         borderSide: const BorderSide(color: AppColors.lightPrimary, width: 2),
       ),
       hintStyle: const TextStyle(color: AppColors.lightTextSecondary),
+      // Add label text color
+      labelStyle: const TextStyle(color: AppColors.primaryGreen),
+      floatingLabelStyle: const TextStyle(color: AppColors.primaryGreen),
+    ),
+
+    // Add text selection theme for cursor and selection colors
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: AppColors.primaryGreen,
+      selectionColor: AppColors.primaryGreen,
+      selectionHandleColor: AppColors.primaryGreen,
+    ),
+
+    // Add date picker theme
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: Colors.white,
+      headerBackgroundColor: AppColors.primaryGreen,
+      headerForegroundColor: Colors.white,
+      dayForegroundColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return Colors.white;
+        }
+        return Colors.black;
+      }),
+      dayBackgroundColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return AppColors.primaryGreen;
+        }
+        return Colors.transparent;
+      }),
+      yearForegroundColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return Colors.white;
+        }
+        return Colors.black;
+      }),
+      yearBackgroundColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return AppColors.primaryGreen;
+        }
+        return Colors.transparent;
+      }),
+      weekdayStyle: TextStyle(
+        color: Colors.grey[600],
+        fontWeight: FontWeight.w500,
+      ),
+      yearStyle: TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+      ),
+      dayStyle: TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+      ),
+    ),
+
+    // Add time picker theme
+    timePickerTheme: TimePickerThemeData(
+      backgroundColor: Colors.white,
+      hourMinuteColor: AppColors.primaryGreen.withOpacity(0.1),
+      hourMinuteTextColor: AppColors.primaryGreen,
+      dayPeriodColor: AppColors.primaryGreen.withOpacity(0.1),
+      dayPeriodTextColor: AppColors.primaryGreen,
+      dialHandColor: AppColors.primaryGreen,
+      dialBackgroundColor: AppColors.primaryGreen.withOpacity(0.1),
+      entryModeIconColor: AppColors.primaryGreen,
     ),
 
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -115,6 +180,71 @@ class AppTheme {
         borderSide: const BorderSide(color: AppColors.darkPrimary, width: 2),
       ),
       hintStyle: const TextStyle(color: AppColors.darkTextSecondary),
+      // Add label text color
+      labelStyle: const TextStyle(color: AppColors.primaryGreen),
+      floatingLabelStyle: const TextStyle(color: AppColors.primaryGreen),
+    ),
+
+    // Add text selection theme for cursor and selection colors
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: AppColors.primaryGreen,
+      selectionColor: AppColors.primaryGreen,
+      selectionHandleColor: AppColors.primaryGreen,
+    ),
+
+    // Add date picker theme for dark mode
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: AppColors.darkSurface,
+      headerBackgroundColor: AppColors.primaryGreen,
+      headerForegroundColor: Colors.white,
+      dayForegroundColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return Colors.white;
+        }
+        return Colors.white;
+      }),
+      dayBackgroundColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return AppColors.primaryGreen;
+        }
+        return Colors.transparent;
+      }),
+      yearForegroundColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return Colors.white;
+        }
+        return Colors.white;
+      }),
+      yearBackgroundColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return AppColors.primaryGreen;
+        }
+        return Colors.transparent;
+      }),
+      weekdayStyle: TextStyle(
+        color: Colors.grey[400],
+        fontWeight: FontWeight.w500,
+      ),
+      yearStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+      ),
+      dayStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+      ),
+    ),
+
+    // Add time picker theme for dark mode
+    timePickerTheme: TimePickerThemeData(
+      backgroundColor: AppColors.darkSurface,
+      hourMinuteColor: AppColors.primaryGreen.withOpacity(0.2),
+      hourMinuteTextColor: AppColors.primaryGreen,
+      dayPeriodColor: AppColors.primaryGreen.withOpacity(0.2),
+      dayPeriodTextColor: AppColors.primaryGreen,
+      dialHandColor: AppColors.primaryGreen,
+      dialBackgroundColor: AppColors.primaryGreen.withOpacity(0.2),
+      entryModeIconColor: AppColors.primaryGreen,
     ),
 
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -133,7 +263,7 @@ class AppTheme {
     ),
 
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: AppColors.darkAccent,
+      backgroundColor: AppColors.lightAccent,
       foregroundColor: Colors.white,
     ),
   );

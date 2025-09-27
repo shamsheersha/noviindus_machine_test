@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BranchProvider()),
         ChangeNotifierProvider(create: (_) => TreatmentProvider()),
         ChangeNotifierProvider(create: (_) => RegisterProvider()),
+        // ChangeNotifierProvider(create: (_) => PatientDetailsProvider())
       ],
       child: MaterialApp(
         title: 'Ayurveda Care',

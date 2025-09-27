@@ -3,6 +3,7 @@ import 'package:ayurved_care/providers/branchlist_provider.dart';
 import 'package:ayurved_care/providers/patientlist_provider.dart';
 import 'package:ayurved_care/providers/treatmentlist_provider.dart';
 import 'package:ayurved_care/screens/login_screen.dart';
+import 'package:ayurved_care/screens/patientdetail_screen.dart';
 import 'package:ayurved_care/screens/register_screen.dart';
 import 'package:ayurved_care/services/storage_service.dart';
 import 'package:ayurved_care/utils/app_color.dart';
@@ -35,7 +36,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchPatientData(String token) async {
-    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+    final patientProvider = Provider.of<PatientProvider>(
+      context,
+      listen: false,
+    );
     await patientProvider.fetchPatientList(token: token);
   }
 
@@ -45,8 +49,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchTreatmentData(String token) async {
-    final treatmentProvider = Provider.of<TreatmentProvider>(context, listen: false);
+    final treatmentProvider = Provider.of<TreatmentProvider>(
+      context,
+      listen: false,
+    );
     await treatmentProvider.fetchTreatmentList(token: token);
+  }
+
+  String _capitalizeFirstLetter(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 
   @override
@@ -67,7 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Consumer<PatientProvider>(
         builder: (context, patientProvider, child) {
-          if (patientProvider.isFetchingPatients && patientProvider.patientList.isEmpty) {
+          if (patientProvider.isFetchingPatients &&
+              patientProvider.patientList.isEmpty) {
             return const Center(
               child: CircularProgressIndicator(color: AppColors.primaryGreen),
             );
@@ -84,7 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
           if (patientProvider.patientList.isEmpty) {
             return SizedBox(
-              height: MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight,
+              height:
+                  MediaQuery.of(context).size.height -
+                  kToolbarHeight -
+                  kBottomNavigationBarHeight,
               child: const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -103,8 +119,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
           return RefreshIndicator(
             onRefresh: () async {
-              final authProvider = Provider.of<AuthProvider>(context, listen: false);
-              await patientProvider.fetchPatientList(token: authProvider.token!);
+              final authProvider = Provider.of<AuthProvider>(
+                context,
+                listen: false,
+              );
+              await patientProvider.fetchPatientList(
+                token: authProvider.token!,
+              );
             },
             color: AppColors.primaryGreen,
             backgroundColor: Colors.white,
@@ -113,11 +134,16 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: patientProvider.patientList.length > 100 ? 100 : patientProvider.patientList.length,
+                itemCount: patientProvider.patientList.length > 100
+                    ? 100
+                    : patientProvider.patientList.length,
                 itemBuilder: (context, index) {
                   final patient = patientProvider.patientList[index];
                   return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     child: Card(
                       elevation: 3,
                       color: Colors.grey[100],
@@ -142,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    patient.name,
+                                    _capitalizeFirstLetter(patient.name),
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -155,9 +181,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(height: 8),
                             if (patient.treatments.isNotEmpty)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryGreen.withOpacity(0.1),
+                                  color: AppColors.primaryGreen.withOpacity(
+                                    0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
@@ -195,7 +226,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  patient.excecutive.isNotEmpty ? patient.excecutive : 'N/A',
+                                  patient.excecutive.isNotEmpty
+                                      ? _capitalizeFirstLetter(patient.excecutive)
+                                      : 'N/A',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey[600],
@@ -204,10 +237,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             const SizedBox(height: 16),
+                            const Divider(),
                             GestureDetector(
                               onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('View details for ${patient.name}')),
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => PatientDetailsScreen(
+                                      patientData: patientProvider.getRawPatientData(index),
+                                    ),
+                                  ),
                                 );
                               },
                               child: Container(
@@ -258,10 +296,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
               if (result == true) {
-                final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+                final authProvider = Provider.of<AuthProvider>(
+                  context,
+                  listen: false,
+                );
+                final patientProvider = Provider.of<PatientProvider>(
+                  context,
+                  listen: false,
+                );
                 if (authProvider.isAuthenticated) {
-                  await patientProvider.fetchPatientList(token: authProvider.token!);
+                  await patientProvider.fetchPatientList(
+                    token: authProvider.token!,
+                  );
                 }
               }
             },

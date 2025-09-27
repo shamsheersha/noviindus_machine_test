@@ -205,4 +205,40 @@ class ApiServices {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> fetchPatientDetails({
+  required String token,
+  required String patientId,
+}) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/patient/$patientId/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return {
+        'success': true,
+        'data': data,
+        'message': 'Patient details fetched successfully',
+      };
+    } else {
+      return {
+        'success': false,
+        'data': null,
+        'message': 'Failed to fetch patient details',
+      };
+    }
+  } catch (e) {
+    return {
+      'success': false,
+      'data': null,
+      'message': 'Network error: $e',
+    };
+  }
+}
 }

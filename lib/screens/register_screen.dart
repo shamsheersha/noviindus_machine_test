@@ -60,6 +60,9 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your name';
                     }
+                    if (!_validateName(value)) {
+                      return 'Please enter a valid name (only letters and spaces)';
+                    }
                     return null;
                   },
                 ),
@@ -69,12 +72,16 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                   controller: _phoneController,
                   decoration: InputDecoration(
                     labelText: 'Number',
-                    hintText: 'Enter your number',
+                    hintText: 'Enter your 10-digit mobile number',
                     border: OutlineInputBorder(),
                   ),
+                  keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your Whatsapp number';
+                      return 'Please enter your phone number';
+                    }
+                    if (!_validatePhone(value)) {
+                      return 'Please enter a valid 10-digit phone number';
                     }
                     return null;
                   },
@@ -85,12 +92,16 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                   controller: _addressController,
                   decoration: InputDecoration(
                     labelText: 'Address',
-                    hintText: 'Enter your full address',
+                    hintText: 'Enter your complete address',
                     border: OutlineInputBorder(),
                   ),
+                  maxLines: 3,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your address';
+                    }
+                    if (!_validateAddress(value)) {
+                      return 'Please enter a valid address (minimum 10 characters)';
                     }
                     return null;
                   },
@@ -106,6 +117,9 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter executive name';
+                    }
+                    if (!_validateName(value)) {
+                      return 'Please enter a valid executive name';
                     }
                     return null;
                   },
@@ -187,8 +201,20 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                     Spacer(),
                     TextButton.icon(
                       onPressed: () => _showTreatmentPopup(context),
-                      icon: Icon(Icons.add),
-                      label: Text('Add Treatments'),
+                      icon: Icon(
+                        Icons.add,
+                        color: AppColors.primaryGreen,
+                      ),
+                      label: Text(
+                        'Add Treatments',
+                        style: TextStyle(
+                          color: AppColors.primaryGreen,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.primaryGreen,
+                      ),
                     ),
                   ],
                 ),
@@ -196,6 +222,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                   Card(
                     margin: EdgeInsets.symmetric(vertical: 8),
                     elevation: 3,
+                    color: Colors.grey[100],
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
@@ -220,6 +247,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                                         horizontal: 8,
                                         vertical: 4,
                                       ),
+                                      
                                       decoration: BoxDecoration(
                                         color: Colors.transparent,
                                         borderRadius: BorderRadius.circular(12),
@@ -247,7 +275,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                           ),
 
                           IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
+                            icon: Icon(Icons.delete,),
                             onPressed: () {
                               setState(() {
                                 _selectedTreatment = null;
@@ -268,11 +296,16 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                   decoration: InputDecoration(
                     labelText: 'Total Amount',
                     border: OutlineInputBorder(),
+                    prefixText: '₹ ',
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter total amount';
+                    }
+                    final amount = double.tryParse(value);
+                    if (amount == null || amount < 0) {
+                      return 'Please enter a valid amount';
                     }
                     return null;
                   },
@@ -284,11 +317,16 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                   decoration: InputDecoration(
                     labelText: 'Discount Amount',
                     border: OutlineInputBorder(),
+                    prefixText: '₹ ',
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter discount amount';
+                    }
+                    final amount = double.tryParse(value);
+                    if (amount == null || amount < 0) {
+                      return 'Please enter a valid discount amount';
                     }
                     return null;
                   },
@@ -343,11 +381,16 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                   decoration: InputDecoration(
                     labelText: 'Advance Amount',
                     border: OutlineInputBorder(),
+                    prefixText: '₹ ',
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter advance amount';
+                    }
+                    final amount = double.tryParse(value);
+                    if (amount == null || amount < 0) {
+                      return 'Please enter a valid advance amount';
                     }
                     return null;
                   },
@@ -359,11 +402,16 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                   decoration: InputDecoration(
                     labelText: 'Balance Amount',
                     border: OutlineInputBorder(),
+                    prefixText: '₹ ',
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter balance amount';
+                    }
+                    final amount = double.tryParse(value);
+                    if (amount == null || amount < 0) {
+                      return 'Please enter a valid balance amount';
                     }
                     return null;
                   },
@@ -383,11 +431,47 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2101),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: AppColors.primaryGreen,
+                              onPrimary: Colors.white,
+                              surface: Colors.white,
+                              onSurface: Colors.black,
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: AppColors.primaryGreen,
+                              ),
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (pickedDate != null) {
                       TimeOfDay? pickedTime = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.now(),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: AppColors.primaryGreen,
+                                onPrimary: Colors.white,
+                                surface: Colors.white,
+                                onSurface: Colors.black,
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: AppColors.primaryGreen,
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
                       );
                       if (pickedTime != null) {
                         setState(() {
@@ -405,6 +489,9 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please select treatment date and time';
                     }
+                    if (!_validateDateTime(_dateTimeController.text)) {
+                      return 'Please select a valid future date and time';
+                    }
                     return null;
                   },
                 ),
@@ -413,7 +500,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                 ElevatedButton(
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: AppColors.primaryGreen,
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: Text('Save'),
@@ -499,7 +586,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                                     isExpanded: true,
                                     icon: Icon(
                                       Icons.keyboard_arrow_down,
-                                      color: Colors.green,
+                                      color: AppColors.primaryGreen,
                                     ),
                                     items: treatmentProvider.treatmentList
                                         .map(
@@ -577,7 +664,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                                             width: 40,
                                             height: 40,
                                             decoration: BoxDecoration(
-                                              color: Colors.green,
+                                              color: AppColors.primaryGreen,
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
@@ -623,7 +710,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                                             width: 40,
                                             height: 40,
                                             decoration: BoxDecoration(
-                                              color: Colors.green,
+                                              color: AppColors.primaryGreen,
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
@@ -687,7 +774,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                                             width: 40,
                                             height: 40,
                                             decoration: BoxDecoration(
-                                              color: Colors.green,
+                                              color: AppColors.primaryGreen,
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
@@ -733,7 +820,7 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
                                             width: 40,
                                             height: 40,
                                             decoration: BoxDecoration(
-                                              color: Colors.green,
+                                              color: AppColors.primaryGreen,
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
@@ -806,13 +893,19 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      // Additional validation checks
+      if (!_validateForm()) {
+        return;
+      }
+
       if (_selectedTreatment == null) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Please select a treatment')));
         return;
       }
-    log('fffffffffffffSubmitting date: ${_dateTimeController.text}'); 
+      
+      log('fffffffffffffSubmitting date: ${_dateTimeController.text}'); 
       if (_maleCount == 0 && _femaleCount == 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Please add at least one patient')),
@@ -874,6 +967,224 @@ class RegisterNowScreenState extends State<RegisterNowScreen> {
         ).showSnackBar(SnackBar(content: Text('Failed to register patient.')));
       }
     }
+  }
+
+  // Comprehensive validation method
+  bool _validateForm() {
+    // Validate name
+    if (!_validateName(_nameController.text)) {
+      _showValidationError('Please enter a valid name (only letters and spaces)');
+      return false;
+    }
+
+    // Validate phone number
+    if (!_validatePhone(_phoneController.text)) {
+      _showValidationError('Please enter a valid 10-digit phone number');
+      return false;
+    }
+
+    // Validate address
+    if (!_validateAddress(_addressController.text)) {
+      _showValidationError('Please enter a valid address (minimum 10 characters)');
+      return false;
+    }
+
+    // Validate executive name
+    if (!_validateName(_excecutiveController.text)) {
+      _showValidationError('Please enter a valid executive name (only letters and spaces)');
+      return false;
+    }
+
+    // Validate location
+    if (_selectedLocation == null || _selectedLocation!.isEmpty) {
+      _showValidationError('Please select a location');
+      return false;
+    }
+
+    // Validate branch
+    if (_selectedBranchId == null || _selectedBranchId!.isEmpty) {
+      _showValidationError('Please select a branch');
+      return false;
+    }
+
+    // Validate payment option
+    if (_selectedPaymentOption == null || _selectedPaymentOption!.isEmpty) {
+      _showValidationError('Please select a payment option');
+      return false;
+    }
+
+    // Validate treatment
+    if (_selectedTreatment == null) {
+      _showValidationError('Please select a treatment');
+      return false;
+    }
+
+    // Validate patient counts
+    if (_maleCount == 0 && _femaleCount == 0) {
+      _showValidationError('Please add at least one patient (male or female)');
+      return false;
+    }
+
+    if (_maleCount < 0 || _femaleCount < 0) {
+      _showValidationError('Patient count cannot be negative');
+      return false;
+    }
+
+    if (_maleCount > 50 || _femaleCount > 50) {
+      _showValidationError('Maximum 50 patients per gender allowed');
+      return false;
+    }
+
+    // Validate amounts
+    if (!_validateAmounts()) {
+      return false;
+    }
+
+    // Validate date and time
+    if (!_validateDateTime(_dateTimeController.text)) {
+      _showValidationError('Please select a valid future date and time');
+      return false;
+    }
+
+    return true;
+  }
+
+  // Name validation (only letters and spaces, 2-50 characters)
+  bool _validateName(String name) {
+    if (name.isEmpty) return false;
+    if (name.length < 2 || name.length > 50) return false;
+    
+    // Check if name contains only letters, spaces, and common name characters
+    final nameRegex = RegExp(r"^[a-zA-Z\s\.\-']+$");
+    return nameRegex.hasMatch(name.trim());
+  }
+
+  // Phone validation (10-digit Indian mobile number)
+  bool _validatePhone(String phone) {
+    if (phone.isEmpty) return false;
+    
+    // Remove any spaces, dashes, or parentheses
+    String cleanPhone = phone.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+    
+    // Check if it's exactly 10 digits
+    if (cleanPhone.length != 10) return false;
+    
+    // Check if all characters are digits
+    final phoneRegex = RegExp(r'^[0-9]+$');
+    if (!phoneRegex.hasMatch(cleanPhone)) return false;
+    
+    // Check if it starts with valid Indian mobile prefixes
+    final validPrefixes = ['6', '7', '8', '9'];
+    return validPrefixes.contains(cleanPhone[0]);
+  }
+
+  // Address validation (minimum 10 characters, not just spaces)
+  bool _validateAddress(String address) {
+    if (address.isEmpty) return false;
+    if (address.trim().length < 10) return false;
+    
+    // Check if address contains meaningful content (not just special characters)
+    final meaningfulChars = address.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+    return meaningfulChars.length >= 5;
+  }
+
+  // Amount validation
+  bool _validateAmounts() {
+    final totalAmount = double.tryParse(_totalAmountController.text);
+    final discountAmount = double.tryParse(_discountAmountController.text);
+    final advanceAmount = double.tryParse(_advanceAmountController.text);
+    final balanceAmount = double.tryParse(_balanceAmountController.text);
+
+    // Check if all amounts are valid numbers
+    if (totalAmount == null || totalAmount < 0) {
+      _showValidationError('Please enter a valid total amount (must be 0 or greater)');
+      return false;
+    }
+
+    if (discountAmount == null || discountAmount < 0) {
+      _showValidationError('Please enter a valid discount amount (must be 0 or greater)');
+      return false;
+    }
+
+    if (advanceAmount == null || advanceAmount < 0) {
+      _showValidationError('Please enter a valid advance amount (must be 0 or greater)');
+      return false;
+    }
+
+    if (balanceAmount == null || balanceAmount < 0) {
+      _showValidationError('Please enter a valid balance amount (must be 0 or greater)');
+      return false;
+    }
+
+    // Check if discount is not more than total amount
+    if (discountAmount > totalAmount) {
+      _showValidationError('Discount amount cannot be greater than total amount');
+      return false;
+    }
+
+    // Check if advance is not more than total amount
+    if (advanceAmount > totalAmount) {
+      _showValidationError('Advance amount cannot be greater than total amount');
+      return false;
+    }
+
+    // Check if advance + discount is not more than total amount
+    if ((advanceAmount + discountAmount) > totalAmount) {
+      _showValidationError('Advance and discount combined cannot be greater than total amount');
+      return false;
+    }
+
+    // Check if balance calculation is correct
+    final calculatedBalance = totalAmount - discountAmount - advanceAmount;
+    if ((balanceAmount - calculatedBalance).abs() > 0.01) { // Allow small floating point differences
+      _showValidationError('Balance amount does not match calculated value (Total - Discount - Advance)');
+      return false;
+    }
+
+    // Check reasonable amount limits
+    if (totalAmount > 1000000) {
+      _showValidationError('Total amount cannot exceed ₹10,00,000');
+      return false;
+    }
+
+    return true;
+  }
+
+  // Date and time validation
+  bool _validateDateTime(String dateTimeString) {
+    if (dateTimeString.isEmpty) return false;
+    
+    try {
+      // Parse the date time string
+      final dateTime = DateTime.parse(dateTimeString);
+      final now = DateTime.now();
+      
+      // Check if date is in the future
+      if (dateTime.isBefore(now)) {
+        return false;
+      }
+      
+      // Check if date is not too far in the future (within 1 year)
+      final oneYearFromNow = now.add(Duration(days: 365));
+      if (dateTime.isAfter(oneYearFromNow)) {
+        return false;
+      }
+      
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Helper method to show validation errors
+  void _showValidationError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   void _clearForm() {
